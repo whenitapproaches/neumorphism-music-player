@@ -84,7 +84,7 @@ export default {
 
 		let isMouseDownProgressBarButton = false
 		const mouseDownProgressBar = (event) => {
-			if(!currentSong.isPlayable) return
+			if (!currentSong.isPlayable) return
 			const { x: mouseX } = event
 			const {
 				x: progressBarX,
@@ -107,9 +107,18 @@ export default {
 				x: progressBarX,
 				width: progressBarWidth,
 			} = progressBarDOM.value.getBoundingClientRect()
-			if(mouseX < progressBarX) return
+			if (mouseX < progressBarX) {
+				pause()
+				seek(0)
+				play()
+				return setProgressBarWidth(0)
+			}
 			const progressBarNewWidth =
 				((mouseX - progressBarX) * 100) / progressBarWidth
+			if (progressBarNewWidth >= 100) {
+				pause()
+				return setProgressBarWidth(100)
+			}
 			isMouseDownProgressBarButton = true
 			return setProgressBarWidth(progressBarNewWidth)
 		}
@@ -122,10 +131,19 @@ export default {
 				x: progressBarX,
 				width: progressBarWidth,
 			} = progressBarDOM.value.getBoundingClientRect()
-			if(mouseX < progressBarX) return
+			if (mouseX < progressBarX) {
+				pause()
+				seek(0)
+				play()
+				return setProgressBarWidth(0)
+			}
 			const progressBarNewWidth =
 				((mouseX - progressBarX) * 100) / progressBarWidth
-
+			if (progressBarNewWidth >= 100) {
+				pause()
+				seek(currentSong.duration)
+				return setProgressBarWidth(100)
+			}
 			const second = Math.round(
 				(progressBarNewWidth * currentSong.duration) / 100
 			)
@@ -161,7 +179,6 @@ export default {
 			currentSong.song.on("end", () => {
 				currentSong.isPlaying = false
 			})
-
 		}
 
 		const seek = (second) => {
@@ -185,8 +202,8 @@ export default {
 			if (currentSong.isPlaying || !currentSong.isPlayable) return
 			if (currentSong.time >= currentSong.duration) {
 				setProgressBarWidth(0)
-        pause()
-        seek(0)
+				pause()
+				seek(0)
 			}
 			currentSong.isPlaying = true
 			currentSong.song.play()
