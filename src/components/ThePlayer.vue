@@ -22,13 +22,13 @@
 		</div>
 		<div class="controls mt-5">
 			<button class="button">
-				<i class="las la-step-backward"></i>
+				<i class="las la-step-backward" @click="prev()"></i>
 			</button>
 			<button class="button" @click="playOrPause()">
 				<i class="las la-pause" v-if="currentSong.isPlaying"></i>
 				<i class="las la-play" v-else></i>
 			</button>
-			<button class="button">
+			<button class="button" @click="next()">
 				<i class="las la-step-forward"></i>
 			</button>
 		</div>
@@ -60,6 +60,8 @@ export default {
 		const progressBarDOM = ref(null)
 
 		const currentSong = reactive({})
+
+		let currentIndex = 0
 
 		const currentPlayingTime = computed(() => {
 			if (!currentSong.duration) return ""
@@ -159,6 +161,8 @@ export default {
 		}
 
 		const createSong = (index) => {
+			currentSong.isPlayable = false
+			currentSong.duration = 0
 			const { name, artist, src } = songs[index]
 
 			currentSong.name = name
@@ -170,15 +174,36 @@ export default {
 
 			currentSong.time = 0
 
+			if (currentSong.song.state() === "loaded") {
+				currentSong.isPlayable = true
+				currentSong.duration = Math.ceil(currentSong.song.duration())
+				play()
+			}
+
 			currentSong.song.on("load", () => {
 				currentSong.isPlayable = true
-				currentSong.duration = Math.round(currentSong.song.duration())
+				currentSong.duration = Math.ceil(currentSong.song.duration())
 				play()
 			})
 
 			currentSong.song.on("end", () => {
 				currentSong.isPlaying = false
 			})
+		}
+
+		const next = () => {
+			const songsLength = songs.length
+			if (currentIndex + 1 > songsLength - 1) return
+			currentIndex++
+			pause()
+			createSong(currentIndex)
+		}
+
+		const prev = () => {
+			if (currentIndex - 1 > 0) return
+			currentIndex--
+			pause()
+			createSong(currentIndex)
 		}
 
 		const seek = (second) => {
@@ -223,7 +248,7 @@ export default {
 		window.addEventListener("mouseleave", endMoveProgressBar)
 		window.addEventListener("mouseup", endMoveProgressBar)
 
-		createSong(0)
+		createSong(currentIndex)
 
 		return {
 			activeProgressBarWidth,
@@ -234,6 +259,8 @@ export default {
 			currentPlayingTime,
 			playOrPause,
 			currentSong,
+			next,
+			prev,
 		}
 	},
 }
