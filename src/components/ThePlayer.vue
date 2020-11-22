@@ -21,8 +21,8 @@
 			</div>
 		</div>
 		<div class="controls mt-5">
-			<button class="button">
-				<i class="las la-step-backward" @click="prev()"></i>
+			<button class="button" @click="prev()">
+				<i class="las la-step-backward"></i>
 			</button>
 			<button class="button" @click="playOrPause()">
 				<i class="las la-pause" v-if="currentSong.isPlaying"></i>
@@ -53,7 +53,7 @@ const songs = [
 
 import { Howl } from "howler"
 
-import { ref, reactive, computed } from "vue"
+import { ref, reactive, computed, onMounted } from "vue"
 export default {
 	setup() {
 		const activeProgressBarWidth = ref(0)
@@ -64,7 +64,7 @@ export default {
 		let currentIndex = 0
 
 		const currentPlayingTime = computed(() => {
-			if (!currentSong.duration) return ""
+			if (!currentSong.duration) return "-:--"
 			const duration = currentSong.time
 			let second = duration % 60
 
@@ -74,7 +74,7 @@ export default {
 		})
 
 		const songDuration = computed(() => {
-			if (!currentSong.duration) return ""
+			if (!currentSong.duration) return "-:--"
 			let duration = currentSong.duration
 
 			let second = duration % 60
@@ -160,7 +160,7 @@ export default {
 			return (activeProgressBarWidth.value = width)
 		}
 
-		const createSong = (index) => {
+		const createSong = (index, changeSong = false) => {
 			currentSong.isPlayable = false
 			currentSong.duration = 0
 			const { name, artist, src } = songs[index]
@@ -177,17 +177,18 @@ export default {
 			if (currentSong.song.state() === "loaded") {
 				currentSong.isPlayable = true
 				currentSong.duration = Math.ceil(currentSong.song.duration())
-				play()
+				if(changeSong) play()
 			}
 
 			currentSong.song.on("load", () => {
 				currentSong.isPlayable = true
 				currentSong.duration = Math.ceil(currentSong.song.duration())
-				play()
+				if(changeSong) play()
 			})
 
 			currentSong.song.on("end", () => {
 				currentSong.isPlaying = false
+				setProgressBarWidth(100)
 			})
 		}
 
@@ -196,14 +197,15 @@ export default {
 			if (currentIndex + 1 > songsLength - 1) return
 			currentIndex++
 			pause()
-			createSong(currentIndex)
+			setProgressBarWidth(0)
+			createSong(currentIndex, true)
 		}
 
 		const prev = () => {
 			if (currentIndex - 1 < 0) return
 			currentIndex--
 			pause()
-			createSong(currentIndex)
+			createSong(currentIndex, true)
 		}
 
 		const seek = (second) => {
@@ -248,7 +250,9 @@ export default {
 		window.addEventListener("mouseleave", endMoveProgressBar)
 		window.addEventListener("mouseup", endMoveProgressBar)
 
-		createSong(currentIndex)
+		onMounted(() => {
+			createSong(currentIndex)
+		})
 
 		return {
 			activeProgressBarWidth,
