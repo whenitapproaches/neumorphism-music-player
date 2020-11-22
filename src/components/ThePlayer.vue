@@ -200,7 +200,7 @@ export default {
 		}
 
 		const prev = () => {
-			if (currentIndex - 1 > 0) return
+			if (currentIndex - 1 < 0) return
 			currentIndex--
 			pause()
 			createSong(currentIndex)
