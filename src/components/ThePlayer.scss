@@ -1,0 +1,57 @@
+.player {
+  .progress-info {
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+  }
+  .progress-bar {
+    width: 80%;
+    cursor: pointer;
+    margin: auto;
+    height: 0.75rem;
+    box-shadow: var(--medium-box-shadow-inset);
+    background-color: var(--background-color);
+    border-radius: 999px;
+    position: relative;
+    .active-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      border-radius: 999px;
+      background: var(--primary-gradient-color);
+      .button.current {
+        position: absolute;
+        top: 0;
+        right: -0.75rem;
+        transform: translateY(-0.375rem);
+        padding: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 999px;
+        z-index: 500;
+        box-shadow: 1px 1px 5px #cacbd9, -1px -1px 5px #ffffff;
+        background-color: var(--background-color);
+      }
+    }
+  }
+  .controls {
+    width: 50%;
+    min-width: 15rem;
+    max-width: 18rem;
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+    .button {
+      width: 4rem;
+      height: 4rem;
+      font-size: 1.5rem;
+      box-shadow: var(--small-box-shadow-outset);
+      &:active {
+        box-shadow: 1px 1px 5px #cacbd9, -1px -1px 5px #ffffff;
+      }
+    }
+  }
+}

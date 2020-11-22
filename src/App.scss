@@ -1,0 +1,43 @@
+@import "../node_modules/bulma/bulma.sass";
+
+@import "../node_modules/line-awesome/dist/line-awesome/css/line-awesome.min.css";
+
+:root {
+  --background-color: #eeefff;
+  --medium-box-shadow-outset: 20px 20px 60px #cacbd9, -20px -20px 60px #ffffff;
+  --small-box-shadow-outset: 5px 5px 10px #cacbd9, -5px -5px 10px #ffffff;
+  --medium-box-shadow-inset: inset 20px 20px 60px #cacbd9,
+    inset -20px -20px 60px #ffffff;
+  --text-color: #777;
+  --primary-gradient-color: radial-gradient(
+    circle,
+    rgba(247, 113, 125, 1) 0%,
+    rgba(222, 99, 154, 1) 100%
+  );
+}
+
+html {
+  overflow: hidden;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--background-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+button.button {
+  border: none;
+  color: var(--text-color);
+  outline: none;
+  border-radius: 999px;
+  box-shadow: var(--medium-box-shadow-outset);
+  background-color: var(--background-color);
+  appearance: none;
+  &:active {
+    box-shadow: 1px 1px 5px #cacbd9, -1px -1px 5px #ffffff;
+  }
+}
